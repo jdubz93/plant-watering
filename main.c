@@ -52,13 +52,22 @@ static I2C_Control i2c;
 
 // rtos
 static void task1(void *args);
+extern void vApplicationStackOverflowHook(xTaskHandle *pxTask,signed portCHAR *pcTaskName);
 // printing
 static inline void uart_putc(char ch);
 int usart_printf(const char *format,...) __attribute((format(printf,1,2)));
+void usart_print_uint(uint16_t value);
 
 static void gpioSetup(void);
 static void uartSetup(void);
 static void i2cSetup(void);
+
+void vApplicationStackOverflowHook(xTaskHandle *pxTask, signed portCHAR *pcTaskName)
+{
+	(void)pxTask;
+	(void)pcTaskName;
+	for(;;);
+}
 
 static void task1(void *args) 
 {
@@ -171,7 +180,7 @@ static void uartSetup(void)
 	usart_enable(USART1);
 }
 
-static void usart_print_uint(uint16_t value) 
+void usart_print_uint(uint16_t value) 
 {
     char buffer[6];
     int index = 0;
@@ -191,7 +200,7 @@ static inline void uart_putc(char ch)
 	usart_send_blocking(USART1, ch); // reason for inline it sends one char at a time, called frequently
 }
 
-static int usart_printf(const char *format, ...)
+int usart_printf(const char *format, ...)
 {
 	va_list args;
 	va_start(args,format);
