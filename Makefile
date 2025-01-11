@@ -3,7 +3,7 @@
 ######################################################################
 
 BINARY		= main
-SRCFILES	= main.c miniprintf.c i2c.c rtos/heap_4.c rtos/list.c rtos/port.c rtos/tasks.c rtos/opencm3.c # rtos/queue.c
+SRCFILES	= main.c miniprintf.c rtos/heap_4.c rtos/list.c rtos/port.c rtos/tasks.c rtos/opencm3.c rtos/queue.c
 LDSCRIPT	= stm32f103c8t6.ld
 
 # start: elf bin

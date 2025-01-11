@@ -85,20 +85,20 @@
  * See http://www.freertos.org/a00110.html.
  *----------------------------------------------------------*/
 
-#define configUSE_PREEMPTION		1
+#define configUSE_PREEMPTION    1
 #define configUSE_IDLE_HOOK		0
 #define configUSE_TICK_HOOK		0
-#define configCPU_CLOCK_HZ		( ( unsigned long ) 72000000 )	/* 72 MHz cpu clock rate */
-#define configSYSTICK_CLOCK_HZ		( configCPU_CLOCK_HZ / 8 )  /* vTaskDelay() fix, a system timer will increment every 8 cpu cycles */
-#define configTICK_RATE_HZ		( ( TickType_t ) 250 )          /* system click interrupt to trigger 250 times per second (every 4 ms) */
-#define configMAX_PRIORITIES		( 5 )
+#define configCPU_CLOCK_HZ		( ( unsigned long ) 72000000 )	
+#define configSYSTICK_CLOCK_HZ	( configCPU_CLOCK_HZ / 8 ) /* vTaskDelay() fix */
+#define configTICK_RATE_HZ		( ( TickType_t ) 250 )
+#define configMAX_PRIORITIES	( 5 )
 #define configMINIMAL_STACK_SIZE	( ( unsigned short ) 128 )
-#define configTOTAL_HEAP_SIZE		( ( size_t ) ( 17 * 1024 ) )
-#define configMAX_TASK_NAME_LEN		( 16 )
+#define configTOTAL_HEAP_SIZE	( ( size_t ) ( 17 * 1024 ) )
+#define configMAX_TASK_NAME_LEN	( 16 )
 #define configUSE_TRACE_FACILITY	0
 #define configUSE_16_BIT_TICKS		0
 #define configIDLE_SHOULD_YIELD		1
-#define configUSE_MUTEXES		0
+#define configUSE_MUTEXES	0
 #define configCHECK_FOR_STACK_OVERFLOW	1
 
 /* Co-routine definitions. */
