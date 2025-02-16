@@ -9,3 +9,5 @@
 **/*.elf
 objs/
 bin/
+*.map
+**/*.map
