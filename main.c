@@ -10,8 +10,7 @@
 #include "fonts.h"
 #include "uartlib.h"
 
-// #include <stdlib.h> // for atof
-// #include <string.h> // for memset
+#include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <ctype.h>
@@ -28,8 +27,8 @@
 #define SLEEP 100
 
 extern void vApplicationStackOverflowHook(xTaskHandle *pxTask,signed portCHAR *pcTaskName);
-static void relayOFF(void);
-static void relayON(void);
+static void relay_off(void);
+static void relay_on(void);
 static void watering_task(void *args);
 static uint16_t read_adc(uint8_t channel);
 void usart_print_uint(uint16_t value);
@@ -44,12 +43,12 @@ vApplicationStackOverflowHook(xTaskHandle *pxTask,signed portCHAR *pcTaskName) {
 }
 
 static void 
-relayOFF(void) {
+relay_off(void) {
 	gpio_set(GPIOA, GPIO5);
 }
 
 static void
-relayON(void) {
+relay_on(void) {
 	gpio_clear(GPIOA, GPIO5);
 }
 
@@ -59,7 +58,7 @@ watering_task(void *args) {
 	int moisture = 0;
 	static char soil_print[10];
 	ili9341_fill_screen(0x0000); // black
-	relayOFF();
+	relay_off();
 	for (;;) {
 		gpio_toggle(GPIOC,GPIO13);
 
@@ -91,7 +90,7 @@ watering_task(void *args) {
 		
 		// prevent watering if obvious invalid value
 		if (moisture < 1000) {
-            relayOFF();
+            relay_off();
             vTaskDelay(pdMS_TO_TICKS(SLEEP));
             continue;
         }
@@ -100,9 +99,9 @@ watering_task(void *args) {
         // PULSE WATERING LOGIC
         // -----------------------------------------
         if (moisture > 1500) {
-			relayON();
+			relay_on();
         } else {
-            relayOFF();
+            relay_off();
         }
 
         vTaskDelay(pdMS_TO_TICKS(SLEEP));
@@ -167,7 +166,7 @@ main(void) {
 	gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO1|GPIO2);
 	gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO5); // relay
 
-	relayOFF();
+	relay_off();
 
 	// ADC 
 	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_ADC1EN);

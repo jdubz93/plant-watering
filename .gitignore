@@ -11,3 +11,4 @@ objs/
 bin/
 *.map
 **/*.map
+notes2.txt
