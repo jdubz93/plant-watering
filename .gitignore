@@ -12,3 +12,5 @@ bin/
 *.map
 **/*.map
 notes2.txt
+.vscode2/
+.vscode/
