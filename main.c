@@ -62,6 +62,9 @@ watering_task(void *args) {
 	for (;;) {
 		gpio_toggle(GPIOC,GPIO13);
 
+		// -----------------------------------------
+        // PH SENSOR
+        // -----------------------------------------
 		char ph_rx_buf[6];
 		getline_uart(1, ph_rx_buf, sizeof(ph_rx_buf));
 
@@ -76,6 +79,9 @@ watering_task(void *args) {
 			3           // scale factor
 		);
 
+		// -----------------------------------------
+        // SOIL SENSOR
+        // -----------------------------------------
 		moisture = read_adc(1);
 
 		snprintf(soil_print, 11, "SOIL: %d", moisture);
@@ -96,7 +102,7 @@ watering_task(void *args) {
         }
 
 		// -----------------------------------------
-        // PULSE WATERING LOGIC
+        // WATER PUMP
         // -----------------------------------------
         if (moisture > 1500) {
 			relay_on();
