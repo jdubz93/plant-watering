@@ -21,7 +21,6 @@
 #include <libopencm3/stm32/usart.h>
 #include <libopencm3/stm32/adc.h>
 #include <libopencm3/cm3/nvic.h>
-// #include <libopencm3/cm3/systick.h>
 #include <libopencm3/stm32/spi.h>
 
 #define SLEEP 100
@@ -159,22 +158,16 @@ int
 main(void) {
 	rcc_clock_setup_in_hse_8mhz_out_72mhz();
 
-	// CLK
-	rcc_periph_clock_enable(RCC_GPIOC);
-	rcc_periph_clock_enable(RCC_GPIOB);
-	rcc_periph_clock_enable(RCC_GPIOA);
-	rcc_periph_clock_enable(RCC_AFIO);
-	rcc_periph_clock_enable(RCC_USART1);
-	rcc_periph_clock_enable(RCC_SPI1);
-	
 	// GPIO 
+	rcc_periph_clock_enable(RCC_GPIOC);
+	rcc_periph_clock_enable(RCC_GPIOA);
 	gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO13);
 	gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO1|GPIO2);
 	gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO5); // relay
-
 	relay_off();
 
 	// ADC 
+	rcc_periph_clock_enable(RCC_GPIOB);
 	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_ADC1EN);
 	adc_power_off(ADC1);
 	rcc_peripheral_reset(&RCC_APB2RSTR, RCC_APB2RSTR_ADC1RST);
@@ -192,6 +185,7 @@ main(void) {
 	while ( adc_is_calibrating(ADC1) );
 
 	// USART
+	rcc_periph_clock_enable(RCC_USART1);
 	gpio_set_mode(GPIOA,GPIO_MODE_OUTPUT_50_MHZ,GPIO_CNF_OUTPUT_ALTFN_PUSHPULL,GPIO_USART1_TX); // PA9
 	gpio_set_mode(GPIOA,GPIO_MODE_OUTPUT_50_MHZ,GPIO_CNF_OUTPUT_ALTFN_PUSHPULL,GPIO11);
 	gpio_set_mode(GPIOA,GPIO_MODE_INPUT,GPIO_CNF_INPUT_FLOAT,GPIO_USART1_RX); // PA10
@@ -200,6 +194,8 @@ main(void) {
 	open_uart(1, 9600, "8N1", "rw", 0, 0);
 
 	// SPI - I can't use PA5 for SCK on SPI1 because I am using that for my relay, so instead I remap SPI1 to PB3 for SCK
+	rcc_periph_clock_enable(RCC_SPI1);
+	rcc_periph_clock_enable(RCC_AFIO);
     gpio_primary_remap(AFIO_MAPR_SWJ_CFG_JTAG_OFF_SW_OFF, AFIO_MAPR_SPI1_REMAP);
 	gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, GPIO3 | GPIO5); // PB3=SCK, PB5=MOSI
 	gpio_set_mode(GPIOB, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO10 | GPIO11 | GPIO7); // PB10=D/C, PB11=RES, PB7=CS/NSS
@@ -208,6 +204,7 @@ main(void) {
     gpio_set(GPIOB, GPIO11); // RES=inactive
     spi_init_master(SPI1, SPI_CR1_BAUDRATE_FPCLK_DIV_2, SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE, SPI_CR1_CPHA_CLK_TRANSITION_1, SPI_CR1_DFF_8BIT, SPI_CR1_MSBFIRST);
     spi_enable(SPI1);
+	
 	
 	// TFT
     ili9341_reset();
